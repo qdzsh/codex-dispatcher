@@ -16,6 +16,7 @@
   },
   "files": [
     "src/",
+    "scripts/check-syntax.mjs",
     "schemas/",
     ".codex-plugin/",
     ".mcp.json",
@@ -26,7 +27,7 @@
     "CONTRIBUTING.md"
   ],
   "scripts": {
-    "check": "node --check src/*.mjs",
+    "check": "node scripts/check-syntax.mjs",
     "test": "node --test test/*.test.mjs"
   },
   "dependencies": {
