@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "codex_worker_dispatcher": {
+      "command": "node",
+      "args": ["./src/server.mjs"],
+      "cwd": "."
+    }
+  }
+}

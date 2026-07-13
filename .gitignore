@@ -1,0 +1,31 @@
+node_modules/
+coverage/
+*.log
+logs/
+backups/
+state/
+*.tmp
+# Environment files and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
+credentials/
+secrets/
+# Caches and package archives
+.cache/
+.npm/
+.parcel-cache/
+.turbo/
+*.tgz
+*.tar.gz
+*.zip
+# Operating-system metadata
+.DS_Store
+Thumbs.db
+Desktop.ini

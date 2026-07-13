@@ -1,0 +1,23 @@
+{
+  "name": "codex-dispatcher",
+  "version": "2.0.0",
+  "description": "Portable audited routing for Codex orchestrator and leaf workers.",
+  "author": { "name": "qdzsh", "url": "https://github.com/qdzsh" },
+  "repository": "https://github.com/qdzsh/codex-dispatcher",
+  "license": "MIT",
+  "homepage": "https://github.com/qdzsh/codex-dispatcher#readme",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Codex Dispatcher",
+    "shortDescription": "Audited model routing for Codex",
+    "longDescription": "Install audited, pinned worker routing while keeping the orchestrator read-only.",
+    "developerName": "qdzsh",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Write"],
+    "websiteURL": "https://github.com/qdzsh/codex-dispatcher",
+    "defaultPrompt": [
+      "Install and configure Codex Dispatcher.",
+      "Route this bounded task through Codex Dispatcher."
+    ]
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "worker_model", "summary", "artifacts", "verification", "escalation_reason"],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": ["completed", "needs_escalation", "blocked"]
+    },
+    "worker_model": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "description"],
+        "properties": {
+          "path": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "verification": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["command", "status", "evidence"],
+        "properties": {
+          "command": { "type": "string" },
+          "status": { "type": "string", "enum": ["passed", "failed", "not_run"] },
+          "evidence": { "type": "string" }
+        }
+      }
+    },
+    "escalation_reason": {
+      "type": ["string", "null"]
+    }
+  }
+}

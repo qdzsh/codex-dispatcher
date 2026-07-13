@@ -1,0 +1,39 @@
+{
+  "name": "@qdzsh/codex-dispatcher",
+  "version": "2.0.0",
+  "description": "Portable, audited Codex worker routing and setup CLI.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qdzsh/codex-dispatcher.git"
+  },
+  "bugs": { "url": "https://github.com/qdzsh/codex-dispatcher/issues" },
+  "homepage": "https://github.com/qdzsh/codex-dispatcher#readme",
+  "type": "module",
+  "bin": {
+    "codex-dispatcher": "./src/cli.mjs",
+    "codex-worker": "./src/cli.mjs"
+  },
+  "files": [
+    "src/",
+    "schemas/",
+    ".codex-plugin/",
+    ".mcp.json",
+    "hooks/",
+    "README.md",
+    "LICENSE",
+    "SECURITY.md",
+    "CONTRIBUTING.md"
+  ],
+  "scripts": {
+    "check": "node --check src/*.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.29.0",
+    "zod": "3.25.76"
+  },
+  "engines": {
+    "node": ">=22.7"
+  }
+}
