@@ -98,7 +98,7 @@ test("Sol shell policy accepts only documented safe argv", () => {
     "codex-worker route --task 'find literal $(data); safely' --intent read-only",
     "codex-worker dispatch --task \"inspect policy\" --cwd /tmp --verify --independent-verification",
     `'${wrapper}' dispatch --task 'inspect literal \`data\`' --cwd /tmp --verify`,
-    `\"${wrapper}\" dispatch --task \"inspect policy\" --cwd /tmp --verify`,
+    `'${wrapper}' dispatch --task 'inspect policy' --cwd /tmp --verify`,
     ];
     for (const command of safeCommands) {
       assert.equal(evaluateSolTool({ tool_name: "Bash", tool_input: { command } }).allowed, true, command);

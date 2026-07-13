@@ -78,7 +78,7 @@ test("CI is repository-root-relative and covers every supported runner", () => {
 });
 
 test("npm package excludes local state and its packed CLI runs with preseeded offline dependencies", { timeout: 120_000 }, () => {
-  const work = temporary("dispatcher-pack-"); const environment = { ...process.env, npm_config_cache: path.join(work, "npm-cache") }; const output = execFileSync("npm", ["pack", "--json"], { cwd: root, encoding: "utf8", env: environment }); const packed = JSON.parse(output)[0]; const tarball = path.join(root, packed.filename); const listing = execFileSync("tar", ["-tf", tarball], { encoding: "utf8" });
+  const work = temporary("dispatcher-pack-"); const environment = { ...process.env, npm_config_cache: path.join(work, "npm-cache") }; const npm = process.platform === "win32" ? "npm.cmd" : "npm"; const output = execFileSync(npm, ["pack", "--json"], { cwd: root, encoding: "utf8", env: environment, shell: process.platform === "win32" }); const packed = JSON.parse(output)[0]; const tarball = path.join(root, packed.filename); const listing = execFileSync("tar", ["-tf", tarball], { encoding: "utf8" });
   assert.doesNotMatch(listing, /node_modules|backups|logs|release-(?:grants|plans|tmp)|\.tmp/);
   const extract = path.join(work, "package"); execFileSync("tar", ["-xf", tarball, "-C", work], { encoding: "utf8" }); fs.cpSync(path.join(root, "node_modules"), path.join(extract, "node_modules"), { recursive: true });
   // Run the packed bin target with only dependencies preseeded by root npm ci;

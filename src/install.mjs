@@ -192,7 +192,7 @@ export function updateRequirements(original, models = {}) {
   text = setTableScalar(text, "models.new_thread", "model", quoteToml(sol)); text = setTableScalar(text, "models.new_thread", "model_reasoning_effort", quoteToml(effort)); text = setTableScalar(text, "features", "multi_agent", "false"); return text;
 }
 
-function run(command, args, options = {}) { const result = spawnSync(command, args, { cwd: options.cwd, env: options.env || process.env, encoding: "utf8", maxBuffer: 16 * 1024 * 1024 }); if (result.error || result.status !== 0) throw new Error(result.error?.message || result.stderr?.trim() || `${command} exited with ${result.status}`); return result.stdout; }
+function run(command, args, options = {}) { const npmOnWindows = process.platform === "win32" && command === "npm"; const result = spawnSync(npmOnWindows ? "npm.cmd" : command, args, { cwd: options.cwd, env: options.env || process.env, encoding: "utf8", maxBuffer: 16 * 1024 * 1024, shell: npmOnWindows }); if (result.error || result.status !== 0) throw new Error(result.error?.message || result.stderr?.trim() || `${command} exited with ${result.status}`); return result.stdout; }
 function commandRunner(runner) {
   if (runner === undefined) return run;
   if (typeof runner !== "function") throw new TypeError("runner must be a function.");
@@ -281,6 +281,7 @@ export function install(options = {}) {
   // separately and are always removed after either commit or rollback.
   const backupBaseExisted = exists(paths.backupBase);
   const stateDirectoryExisted = exists(path.dirname(paths.stateFile));
+  const wrapperDirectoryExisted = exists(paths.wrapperDir);
   if (previousManifest && (!previousManifest.backup_root || !Array.isArray(previousManifest.backups))) throw new Error("The installed dispatcher state has no durable uninstall baseline. Reinstall only after preserving your current configuration, or restore a valid state file.");
   // The first successful install owns this root for its entire lifetime. Updates
   // may change the installed payload, but must never recapture the pre-install
@@ -336,7 +337,7 @@ export function install(options = {}) {
     if (options.injectFailure === "after-user-files") throw new Error("Injected failure after user-file writes.");
     ensureSystemRequirements(paths, requirements, { ...options, platform, managed }, runner);
     if (options.injectFailure === "after-system-requirements") throw new Error("Injected failure after system requirements mutation.");
-    const files = [paths.configFile, paths.agentsFile, paths.hooksFile, ...paths.wrapperFiles, ...(managed ? [paths.requirementsFile] : [])].filter(exists); const manifest = { version: MANIFEST_VERSION, installed_at: new Date().toISOString(), paths, managed, models, backup_root: backupRoot, backup_base_existed: previousManifest?.backup_base_existed ?? backupBaseExisted, state_directory_existed: previousManifest?.state_directory_existed ?? stateDirectoryExisted, backups: baselineBackups, retired_legacy_release_state: retireLegacyReleaseState, preserve_on_uninstall: [...preservedOnUninstall].sort(), user_preservations: userPreservations, hashes_after: { ...Object.fromEntries(files.map((file) => [file, sha(file)])), [paths.destination]: treeHash(paths.destination) } };
+    const files = [paths.configFile, paths.agentsFile, paths.hooksFile, ...paths.wrapperFiles, ...(managed ? [paths.requirementsFile] : [])].filter(exists); const manifest = { version: MANIFEST_VERSION, installed_at: new Date().toISOString(), paths, managed, models, backup_root: backupRoot, backup_base_existed: previousManifest?.backup_base_existed ?? backupBaseExisted, state_directory_existed: previousManifest?.state_directory_existed ?? stateDirectoryExisted, wrapper_directory_existed: previousManifest?.wrapper_directory_existed ?? wrapperDirectoryExisted, backups: baselineBackups, retired_legacy_release_state: retireLegacyReleaseState, preserve_on_uninstall: [...preservedOnUninstall].sort(), user_preservations: userPreservations, hashes_after: { ...Object.fromEntries(files.map((file) => [file, sha(file)])), [paths.destination]: treeHash(paths.destination) } };
     atomicWrite(paths.stateFile, `${JSON.stringify(manifest, null, 2)}\n`);
     removeTransactionBackups(transactionBackupRoot);
     return { status: "installed", ...manifest };
@@ -488,6 +489,7 @@ function removeDurableInstallArtifacts(manifest, paths) {
   if (manifest.backup_base_existed === false && exists(paths.backupBase) && fs.readdirSync(paths.backupBase).length === 0) fs.rmdirSync(paths.backupBase);
   const stateDirectory = path.dirname(paths.stateFile);
   if (manifest.state_directory_existed === false && exists(stateDirectory) && fs.readdirSync(stateDirectory).length === 0) fs.rmdirSync(stateDirectory);
+  if (manifest.wrapper_directory_existed === false && exists(paths.wrapperDir) && fs.readdirSync(paths.wrapperDir).length === 0) fs.rmdirSync(paths.wrapperDir);
 }
 export function uninstall(options = {}) {
   const runner = commandRunner(options.runner);
